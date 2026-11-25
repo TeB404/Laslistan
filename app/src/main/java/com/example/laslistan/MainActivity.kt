@@ -47,3 +47,18 @@ fun GreetingPreview() {
 }
 
 //test
+
+data class Bok(
+    val id: Int,
+    val titel: String,
+    val ar: Int,
+    val genre: String,
+    val sedd: Boolean = false,
+)
+
+val startbok = listOf(
+    Bok(1, "Harry Potter: Den vises sten", 2001, "Fantasi"),
+    Bok(2, "Tunnlar", 2007, "Äventyr"),
+    Bok(3, "Matilda", 1988, "Fantasi")
+)
+
