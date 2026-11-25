@@ -1,1 +1,10 @@
 /build
+.gitignore
+	.idea/
+	app/
+	build.gradle.kts
+	gradle.properties
+	gradle/
+	gradlew
+	gradlew.bat
+	settings.gradle.kts
