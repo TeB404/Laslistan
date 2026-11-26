@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -67,7 +68,7 @@ fun GreetingPreview() {
     }
 }
 
-//test
+//test 100 år av problem senare:
 
 data class Bok(
     val id: Int,
@@ -149,10 +150,19 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             TextField(
                 value = state.nyTitel,
                 onValueChange = {viewModel.onNewTitleChange(it) },
-                label {Text("Titel") },
+                label { Text("Titel") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
+            Button(
+                onClick = { viewModel.addBok() },
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth()
+            ) {
+                Text("Lägg till")
+            }
+
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
