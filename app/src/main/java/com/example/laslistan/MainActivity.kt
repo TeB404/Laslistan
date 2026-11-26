@@ -126,7 +126,8 @@ fun BokKort(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LaslistanScreen() {
+fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
+    val state = viewModel.uiState
     Scaffold(
         topBar = {
             TopAppBar(
@@ -156,6 +157,6 @@ fun LaslistanScreen() {
 @Composable
 fun LaslistanScreenPreview() {
     LaslistanTheme {
-        LaslistanScreen()
+        LaslistanScreen(viewModel = LaslistanViewModel())
     }
 }
