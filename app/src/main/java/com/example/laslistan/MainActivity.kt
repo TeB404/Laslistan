@@ -1,6 +1,7 @@
 package com.example.laslistan
 
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
@@ -138,20 +140,33 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             )
         }
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(horizontal = 10.dp, vertical = 7.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .padding(16.dp)
         ) {
-            items(startbok, key = { it.id }) { bok ->
-                BokKort(bok = bok)
+            TextField(
+                value = state.nyTitel,
+                onValueChange = {viewModel.onNewTitleChange(it) },
+                label {Text("Titel") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(state.bocker, key = { it.id }) {bok ->
+                    BokKort(bok = bok)
+                }
             }
+        }
         }
 
     }
-}
 
 @Preview(showBackground = true)
 @Composable
