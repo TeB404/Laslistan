@@ -2,6 +2,7 @@ package com.example.laslistan
 
 
 
+import android.R
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,10 +21,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
@@ -104,7 +107,9 @@ fun BildPlats(titel: String, modifier: Modifier = Modifier) {
 @Composable
 fun BokKort(
     bok : Bok,
-    modifier: Modifier = Modifier
+    onToggle: () -> Unit,
+    onRemove: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -122,7 +127,15 @@ fun BokKort(
                     text = "${bok.ar} . ${bok.genre}",
                     style = MaterialTheme.typography.bodyLarge,
                 )
+
+                TextButton(onClick = onRemove) {
+                    Text("Ta bort")
+                }
             }
+            Checkbox(
+                checked = bok.sedd,
+                onCheckedChange = { onToggle() },
+            )
         }
     }
 }
@@ -131,6 +144,8 @@ fun BokKort(
 @Composable
 fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
     val state = viewModel.uiState
+    val attSe = state.bocker.filter { !it.sedd }
+    val sedda = state.bocker.filter { it.sedd }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -156,21 +171,41 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             )
             Button(
                 onClick = { viewModel.addBok() },
+                enabled = state.nyTitel.isNotBklank(),
                 modifier = Modifier
                     .padding(top = 8.dp)
                     .fillMaxWidth()
             ) {
                 Text("Lägg till")
             }
-
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
                     .padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(state.bocker, key = { it.id }) {bok ->
-                    BokKort(bok = bok)
+                item {
+                    Text(
+                        text = "Vill läsa",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
+                items(attSe, key = { it.id }) {bok ->
+                    BokKort(
+                        bok = bok,
+                        onToggle = { viewModel.toggleSeen(bok.id) },
+                        onRemove = { viewModel.removeBok(bok.id) },
+                    )
+                }
+
+                items(sedda, key = { it.id }) {bok ->
+                    BokKort(
+                        bok = bok,
+                        onToggle = { viewModel.toggleSeen(bok.id) },
+                        onRemove = { viewModel.removeBok(bok.id) },
+                    )
                 }
             }
         }

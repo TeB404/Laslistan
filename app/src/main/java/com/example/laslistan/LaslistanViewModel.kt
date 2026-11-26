@@ -1,5 +1,6 @@
 package com.example.laslistan
 
+
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
@@ -32,5 +33,15 @@ class LaslistanViewModel : ViewModel() {
             nyTitel = "",
             bocker = uiState.bocker + bok,
         )
+    }
+
+    fun toggleSeen(id: Int) {
+        uiState = uiState.copy(
+            bocker = uiState.bocker.map { if (it.id == id) it.copy(sedd = !it.sedd) else it}
+        )
+    }
+
+    fun removeBok(id: Int) {
+        uiState = uiState.copy(bocker = uiState.bocker.filter { it.id != id})
     }
 }
