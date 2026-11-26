@@ -30,6 +30,7 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -84,14 +85,14 @@ val startbok = listOf(
 fun BildPlats(titel: String, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-        .size(width = 80.dp, height = 120.dp)
-        .clip(RoundedCornerShape(8.dp))
+        .size(width = 60.dp, height = 80.dp)
+        .clip(RoundedCornerShape(10.dp))
         .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = titel.firstOrNull()?.uppercase() ?: "?",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
     }
@@ -100,23 +101,23 @@ fun BildPlats(titel: String, modifier: Modifier = Modifier) {
 @Composable
 fun BokKort(
     bok : Bok,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(1.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             BildPlats(titel = bok.titel)
             Column(
                 modifier = Modifier
-                    .padding(start = 12.dp)
+                    .padding(start = 6.dp)
                     .weight(1f)
             ) {
-                Text(text = bok.titel, style = MaterialTheme.typography.titleMedium)
+                Text(text = bok.titel, style = MaterialTheme.typography.titleLarge)
                 Text(
                     text = "${bok.ar} . ${bok.genre}",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }
@@ -140,8 +141,8 @@ fun LaslistanScreen() {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(horizontal = 10.dp, vertical = 7.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(startbok, key = { it.id }) { bok ->
                 BokKort(bok = bok)
