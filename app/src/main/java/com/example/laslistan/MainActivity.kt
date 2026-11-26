@@ -78,17 +78,11 @@ data class Bok(
     val sedd: Boolean = false,
 )
 
-val startbok = listOf(
-    Bok(1, "Harry Potter: Den vises sten", 2001, "Fantasi"),
-    Bok(2, "Tunnlar", 2007, "Äventyr"),
-    Bok(3, "Matilda", 1988, "Fantasi")
-)
-
 @Composable
 fun BildPlats(titel: String, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-        .size(width = 60.dp, height = 80.dp)
+        .size(width = 60.dp, height = 100.dp)
         .clip(RoundedCornerShape(10.dp))
         .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center,
@@ -116,13 +110,13 @@ fun BokKort(
             BildPlats(titel = bok.titel)
             Column(
                 modifier = Modifier
-                    .padding(start = 6.dp)
+                    .padding(start = 9.dp)
                     .weight(1f)
             ) {
-                Text(text = bok.titel, style = MaterialTheme.typography.titleLarge)
+                Text(text = bok.titel, style = MaterialTheme.typography.titleLargeEmphasized)
                 Text(
                     text = "${bok.ar} . ${bok.genre}",
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyLargeEmphasized,
                 )
 
                 TextButton(onClick = onRemove) {
@@ -157,7 +151,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(10.dp)
         ) {
             TextField(
                 value = state.nyTitel,
@@ -170,7 +164,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                 onClick = { viewModel.addBok() },
                 enabled = state.nyTitel.isNotBlank(),
                 modifier = Modifier
-                    .padding(top = 8.dp)
+                    .padding(top = 10.dp)
                     .fillMaxWidth()
             ) {
                 Text("Lägg till")
@@ -178,14 +172,14 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(top = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(top = 9.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 item {
                     Text(
-                        text = "Vill läsa",
+                        text = "Vill läsa: ",
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        modifier = Modifier.padding(vertical = 9.dp)
                     )
                 }
 
