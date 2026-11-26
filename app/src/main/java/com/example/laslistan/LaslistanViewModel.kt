@@ -8,7 +8,11 @@ import androidx.lifecycle.ViewModel
 
 data class LaslistanUiState(
     val nyTitel: String = "",
-    val bocker: List<Bok> = startbok,
+    val bocker: List<Bok> = listOf(
+        Bok(1, "Harry Potter: Den vises sten", 2001, "Fantasi"),
+        Bok(2, "Tunnlar", 2007, "Äventyr"),
+        Bok(3, "Matilda", 1988, "Fantasi")
+    )
 )
 
 class LaslistanViewModel : ViewModel() {
