@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -77,20 +79,19 @@ data class Bok(
     val genre: String,
     val sedd: Boolean = false,
 )
-
 @Composable
 fun BildPlats(titel: String, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
         .size(width = 60.dp, height = 100.dp)
         .clip(RoundedCornerShape(10.dp))
-        .background(MaterialTheme.colorScheme.primaryContainer),
+        .background(Color.Blue),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = titel.firstOrNull()?.uppercase() ?: "?",
             style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = Color.Blue,
         )
     }
 }
@@ -112,6 +113,8 @@ fun BokKort(
                 modifier = Modifier
                     .padding(start = 9.dp)
                     .weight(1f)
+                    .border(4.dp, Color.Magenta)
+                    .fillMaxWidth()
             ) {
                 Text(text = bok.titel, style = MaterialTheme.typography.titleLargeEmphasized)
                 Text(
@@ -120,7 +123,10 @@ fun BokKort(
                 )
 
                 TextButton(onClick = onRemove) {
-                    Text("Ta bort")
+                    Text(
+                        text = "Ta bort",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
             Checkbox(
@@ -142,7 +148,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             TopAppBar(
                 title = {Text("Läslistan")},
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = Color.Magenta,
                 )
             )
         }
