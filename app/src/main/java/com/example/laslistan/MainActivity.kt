@@ -3,6 +3,7 @@ package com.example.laslistan
 
 
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -150,6 +151,7 @@ fun BokKort(
 @Composable
 fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
     val state = viewModel.uiState
+    val readCount = state.bocker.count {it.sedd}
     val attSe = state.bocker.filter { !it.sedd }
     val sedda = state.bocker.filter { it.sedd }
     Scaffold(
@@ -207,38 +209,53 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                     "Spara"
                 )
             }
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(top = 9.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                item {
-                    Text(
-                        text = "Vill läsa: ",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(vertical = 9.dp)
-                    )
-                }
 
-                items(attSe, key = { it.id }) {bok ->
-                    BokKort(
-                        bok = bok,
-                        onToggle = { viewModel.toggleSeen(bok.id) },
-                        onRemove = { viewModel.removeBok(bok.id) },
-                        onEdit = { viewModel.startEdit(bok) }
-                    )
-                }
+            Text(
+                text = "$readCount av ${state.bocker.size} lästa",
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(top = 8.dp)
+            )
 
-                items(sedda, key = { it.id }) {bok ->
-                    BokKort(
-                        bok = bok,
-                        onToggle = { viewModel.toggleSeen(bok.id) },
-                        onRemove = { viewModel.removeBok(bok.id) },
-                        onEdit = { viewModel.startEdit(bok) }
-                    )
+            if (state.bocker.isEmpty()) {
+                Text(
+                    text = "Hyllan är tom. Lägg till och börja läsa!",
+                    modifier = Modifier.padding(top = 16.dp),
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(top = 9.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    item {
+                        Text(
+                            text = "Vill läsa: ",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(vertical = 9.dp)
+                        )
+                    }
+
+                    items(attSe, key = { it.id }) {bok ->
+                        BokKort(
+                            bok = bok,
+                            onToggle = { viewModel.toggleSeen(bok.id) },
+                            onRemove = { viewModel.removeBok(bok.id) },
+                            onEdit = { viewModel.startEdit(bok) }
+                        )
+                    }
+
+                    items(sedda, key = { it.id }) {bok ->
+                        BokKort(
+                            bok = bok,
+                            onToggle = { viewModel.toggleSeen(bok.id) },
+                            onRemove = { viewModel.removeBok(bok.id) },
+                            onEdit = { viewModel.startEdit(bok) }
+                        )
+                    }
                 }
             }
+
         }
         }
 

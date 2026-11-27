@@ -40,7 +40,7 @@ class LaslistanViewModel : ViewModel() {
             id = nextId,
             titel = titel,
             ar = 0,
-            kategori = uiState.nyKategori,
+            kategori = "Okänd",
         )
         nextId += 1
         uiState = uiState.copy(
