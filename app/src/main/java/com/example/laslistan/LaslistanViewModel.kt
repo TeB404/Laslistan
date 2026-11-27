@@ -1,13 +1,18 @@
 package com.example.laslistan
 
 
+import android.widget.Filter
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
+val filters = listOf("Alla", "Olästa", "Lästa")
+
 data class LaslistanUiState(
     val nyTitel: String = "",
+    val filter: String = "Alla",
+    val sortByTitle: Boolean = false,
     val editingId: Int? = null,
     val nyKategori: String = "Fantasyroman",
     val bocker: List<Bok> = listOf(
@@ -40,17 +45,14 @@ class LaslistanViewModel : ViewModel() {
             id = nextId,
             titel = titel,
             ar = 0,
-            kategori = "Okänd",
+            kategori = uiState.nyKategori,
         )
+
         nextId += 1
+
         uiState = uiState.copy(
             nyTitel = "",
-            bocker = uiState.bocker + Bok(
-                id = nextId,
-                titel = titel,
-                ar = 0,
-                kategori = uiState.nyKategori
-            )
+            bocker = uiState.bocker + bok
         )
     }
 
@@ -86,5 +88,13 @@ class LaslistanViewModel : ViewModel() {
 
     fun onKategoriChange(kategori: String) {
         uiState = uiState.copy(nyKategori = kategori)
+    }
+
+    fun onFilterChange(filter: String) {
+        uiState = uiState.copy(filter = filter)
+    }
+
+    fun toggleSort() {
+        uiState = uiState.copy(sortByTitle = !uiState.sortByTitle)
     }
 }

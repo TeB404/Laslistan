@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.laslistan.ui.theme.LaslistanTheme
+import kotlinx.coroutines.selects.select
 
 
 class MainActivity : ComponentActivity() {
@@ -151,13 +152,26 @@ fun BokKort(
 @Composable
 fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
     val state = viewModel.uiState
-    val readCount = state.bocker.count {it.sedd}
+    val readCount = state.bocker.count { it.sedd }
     val attSe = state.bocker.filter { !it.sedd }
     val sedda = state.bocker.filter { it.sedd }
+    val filtered = state.bocker.filter {
+        when (state.filter) {
+            "Olästa" -> !it.sedd
+            "Lästa" -> it.sedd
+            else -> true
+        }
+    }
+
+    val shown = if (state.sortByTitle) {
+        filtered.sortedBy { it.titel.lowercase() }
+    } else {
+        filtered
+    }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text("Läslistan")},
+                title = { Text("Läslistan") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Magenta,
                 )
@@ -172,7 +186,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
         ) {
             TextField(
                 value = state.nyTitel,
-                onValueChange = {viewModel.onNewTitleChange(it) },
+                onValueChange = { viewModel.onNewTitleChange(it) },
                 label = { Text("Titel") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -181,13 +195,28 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                kategorier.forEach {kategori ->
+                filters.forEach { filter ->
                     FilterChip(
-                        selected = state.nyKategori == kategori,
-                        onClick = { viewModel.onKategoriChange(kategori) },
-                        label = { Text(kategori)}
+                        selected = state.filter == filter,
+                        onClick = { viewModel.onFilterChange(filter) },
+                        label = { Text(filter) },
                     )
                 }
+
+                FilterChip(
+                    selected = state.sortByTitle,
+                    onClick = { viewModel.toggleSort() },
+                    label = { Text("A-Ö") }
+                )
+            }
+
+
+            kategorier.forEach { kategori ->
+                FilterChip(
+                    selected = state.nyKategori == kategori,
+                    onClick = { viewModel.onKategoriChange(kategori) },
+                    label = { Text(kategori) }
+                )
             }
             Button(
                 onClick = {
@@ -204,9 +233,9 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             ) {
                 Text(
                     if (state.editingId == null)
-                    "Lägg till"
+                        "Lägg till"
                     else
-                    "Spara"
+                        "Spara"
                 )
             }
 
@@ -236,7 +265,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                         )
                     }
 
-                    items(attSe, key = { it.id }) {bok ->
+                    items(attSe, key = { it.id }) { bok ->
                         BokKort(
                             bok = bok,
                             onToggle = { viewModel.toggleSeen(bok.id) },
@@ -245,7 +274,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                         )
                     }
 
-                    items(sedda, key = { it.id }) {bok ->
+                    items(sedda, key = { it.id }) { bok ->
                         BokKort(
                             bok = bok,
                             onToggle = { viewModel.toggleSeen(bok.id) },
@@ -257,14 +286,14 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             }
 
         }
-        }
 
-    }
-
-@Preview(showBackground = true)
-@Composable
-fun LaslistanScreenPreview() {
-    LaslistanTheme {
-        LaslistanScreen()
     }
 }
+
+    @Preview(showBackground = true)
+    @Composable
+    fun LaslistanScreenPreview() {
+        LaslistanTheme {
+            LaslistanScreen()
+        }
+    }
