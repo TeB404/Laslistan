@@ -28,12 +28,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +47,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.laslistan.ui.theme.LaslistanTheme
+import kotlinx.coroutines.launch
+import androidx.compose.material3.SnackbarHostState
 import kotlinx.coroutines.selects.select
 
 
@@ -152,6 +159,8 @@ fun BokKort(
 @Composable
 fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
     val state = viewModel.uiState
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     val readCount = state.bocker.count { it.sedd }
     val attSe = state.bocker.filter { !it.sedd }
     val sedda = state.bocker.filter { it.sedd }
@@ -169,6 +178,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
         filtered
     }
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Läslistan") },
@@ -278,7 +288,19 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                         BokKort(
                             bok = bok,
                             onToggle = { viewModel.toggleSeen(bok.id) },
-                            onRemove = { viewModel.removeBok(bok.id) },
+                            onRemove = {
+                                viewModel.removeBok(bok.id)
+                                scope.launch {
+                                    val result = snackbarHostState.showSnackbar(
+                                        message = "${bok.titel} togs bort",
+                                        actionLabel = "Ångra",
+                                        duration = SnackbarDuration.Short,
+                                    )
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        viewModel.undoRemove()
+                                    }
+                                }
+                            },
                             onEdit = { viewModel.startEdit(bok) }
                         )
                     }
@@ -290,7 +312,12 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
     }
 }
 
-    @Preview(showBackground = true)
+@Composable
+fun SnackbarHostStaste() {
+    TODO("Not yet implemented")
+}
+
+@Preview(showBackground = true)
     @Composable
     fun LaslistanScreenPreview() {
         LaslistanTheme {

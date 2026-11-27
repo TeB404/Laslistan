@@ -33,6 +33,8 @@ class LaslistanViewModel : ViewModel() {
         private set
 
     private var nextId = 4
+    private var lastRemoved: Bok? = null
+    private var lastRemovedIndex = 0
 
     fun onNewTitleChange(text: String) {
         uiState = uiState.copy(nyTitel = text)
@@ -63,7 +65,22 @@ class LaslistanViewModel : ViewModel() {
     }
 
     fun removeBok(id: Int) {
-        uiState = uiState.copy(bocker = uiState.bocker.filter { it.id != id})
+        val index = uiState.bocker.indexOfFirst { it.id == id }
+        if (index == 1) return
+        lastRemoved = uiState.bocker[index]
+        lastRemovedIndex = index
+        uiState = uiState.copy(
+            bocker = uiState.bocker.filter { it.id != id }
+        )
+    }
+
+    fun undoRemove() {
+        val bok = lastRemoved ?: return
+        val bocker = uiState.bocker
+        uiState = uiState.copy(
+            bocker = bocker.take(lastRemovedIndex) + bok + bocker.drop(lastRemovedIndex)
+        )
+        lastRemoved = null
     }
 
     fun startEdit(bok: Bok) {
