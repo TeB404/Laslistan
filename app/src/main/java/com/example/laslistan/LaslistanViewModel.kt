@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 
 data class LaslistanUiState(
     val nyTitel: String = "",
+    val editingId: Int? = null,
     val bocker: List<Bok> = listOf(
         Bok(1, "Harry Potter: Den vises sten", 2001, "Fantasi"),
         Bok(2, "Tunnlar", 2007, "Äventyr"),
@@ -49,5 +50,25 @@ class LaslistanViewModel : ViewModel() {
 
     fun removeBok(id: Int) {
         uiState = uiState.copy(bocker = uiState.bocker.filter { it.id != id})
+    }
+
+    fun startEdit(bok: Bok) {
+        uiState = uiState.copy(
+            nyTitel = bok.titel,
+            editingId = bok.id,
+        )
+    }
+
+    fun saveEdit() {
+        val titel = uiState.nyTitel.trim()
+        if (titel.isEmpty()) return
+        val id = uiState.editingId
+        uiState = uiState.copy(
+            nyTitel = "",
+            editingId = null,
+            bocker = uiState.bocker.map {
+                if (it.id == id) it.copy(titel = titel) else it
+            },
+        )
     }
 }
