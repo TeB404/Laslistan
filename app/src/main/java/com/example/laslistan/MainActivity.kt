@@ -49,8 +49,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.laslistan.ui.theme.LaslistanTheme
 import kotlinx.coroutines.launch
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.ButtonDefaults
 import kotlinx.coroutines.selects.select
 
+
+val TwilightBlack = Color(0xFF0A0A12)
+val TwilightNavy = Color(0xFF131A2B)
+val TwilightBlue = Color(0xFF3B82F6)
+val TwilightPurple = Color(0xFF8B5CF6)
+val TwilightMagenta = Color(0xFFD946EF)
+val TwilightText = Color(0xFFE6E6FA)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,13 +104,13 @@ fun BildPlats(titel: String, modifier: Modifier = Modifier) {
         modifier = modifier
         .size(width = 60.dp, height = 100.dp)
         .clip(RoundedCornerShape(10.dp))
-        .background(Color.Blue),
+        .background(TwilightBlue),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = titel.firstOrNull()?.uppercase() ?: "?",
             style = MaterialTheme.typography.headlineLarge,
-            color = Color.Blue,
+            color = TwilightText,
         )
     }
 }
@@ -114,7 +123,9 @@ fun BokKort(
     onEdit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier.fillMaxWidth()) {
+    Card(
+        modifier = modifier.fillMaxWidth()
+    ) {
         Row(
             modifier = Modifier.padding(1.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -124,7 +135,10 @@ fun BokKort(
                 modifier = Modifier
                     .padding(start = 9.dp)
                     .weight(1f)
-                    .border(4.dp, Color.Magenta)
+                    .border(
+                        width = 2.dp,
+                        color = TwilightPurple
+                    )
                     .fillMaxWidth()
             ) {
                 Text(
@@ -171,9 +185,14 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Läslistan") },
+                title = {
+                    Text(
+                        text = "Läslistan",
+                        color = TwilightText
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Magenta,
+                    containerColor = TwilightNavy
                 )
             )
         }
@@ -182,6 +201,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
+                .background(TwilightBlack)
                 .padding(10.dp)
         ) {
             TextField(
@@ -200,25 +220,40 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                         selected = state.filter == filter,
                         onClick = { viewModel.onFilterChange(filter) },
                         label = { Text(filter) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = TwilightMagenta,
+                            selectedLabelColor = Color.White
+                        )
                     )
                 }
 
                 FilterChip(
                     selected = state.sortByTitle,
                     onClick = { viewModel.toggleSort() },
-                    label = { Text("A-Ö") }
+                    label = { Text("A-Ö") },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = TwilightMagenta,
+                        selectedLabelColor = Color.White
+                )
                 )
             }
 
-
-            kategorier.forEach { kategori ->
-                FilterChip(
-                    selected = state.nyKategori == kategori,
-                    onClick = { viewModel.onKategoriChange(kategori) },
-                    label = { Text(kategori) }
-                )
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                kategorier.forEach { kategori ->
+                    FilterChip(
+                        selected = state.nyKategori == kategori,
+                        onClick = { viewModel.onKategoriChange(kategori) },
+                        label = { Text(kategori) }
+                    )
+                }
             }
             Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = TwilightPurple
+                ),
                 onClick = {
                     if (state.editingId == null) {
                         viewModel.addBok()
