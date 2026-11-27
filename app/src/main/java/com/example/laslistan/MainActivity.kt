@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -76,7 +77,7 @@ data class Bok(
     val id: Int,
     val titel: String,
     val ar: Int,
-    val genre: String,
+    val kategori: String,
     val sedd: Boolean = false,
 )
 @Composable
@@ -117,10 +118,13 @@ fun BokKort(
                     .border(4.dp, Color.Magenta)
                     .fillMaxWidth()
             ) {
-                Text(text = bok.titel, style = MaterialTheme.typography.titleLargeEmphasized)
                 Text(
-                    text = "${bok.ar} . ${bok.genre}",
-                    style = MaterialTheme.typography.bodyLargeEmphasized,
+                    text = bok.titel,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = bok.kategori,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
 
                 TextButton(onClick = onRemove) {
@@ -171,6 +175,18 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                kategorier.forEach {kategori ->
+                    FilterChip(
+                        selected = state.nyKategori == kategori,
+                        onClick = { viewModel.onKategoriChange(kategori) },
+                        label = { Text(kategori)}
+                    )
+                }
+            }
             Button(
                 onClick = {
                     if (state.editingId == null) {
