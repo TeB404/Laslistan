@@ -162,20 +162,10 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val readCount = state.bocker.count { it.sedd }
-    val attSe = state.bocker.filter { !it.sedd }
-    val sedda = state.bocker.filter { it.sedd }
-    val filtered = state.bocker.filter {
-        when (state.filter) {
-            "Olästa" -> !it.sedd
-            "Lästa" -> it.sedd
-            else -> true
-        }
-    }
-
-    val shown = if (state.sortByTitle) {
-        filtered.sortedBy { it.titel.lowercase() }
-    } else {
-        filtered
+    val filtered = when (state.filter) {
+        "Lästa" -> state.bocker.sortedByDescending { it.sedd }
+        "Olästa" -> state.bocker.sortedBy { it.sedd }
+        else -> state.bocker
     }
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -275,27 +265,21 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                         )
                     }
 
-                    items(attSe, key = { it.id }) { bok ->
+                    items(filtered, key = { it.id }) {bok ->
                         BokKort(
                             bok = bok,
-                            onToggle = { viewModel.toggleSeen(bok.id) },
-                            onRemove = { viewModel.removeBok(bok.id) },
-                            onEdit = { viewModel.startEdit(bok) }
-                        )
-                    }
+                            onToggle = { viewModel.toggleSeen(bok.id)},
 
-                    items(sedda, key = { it.id }) { bok ->
-                        BokKort(
-                            bok = bok,
-                            onToggle = { viewModel.toggleSeen(bok.id) },
                             onRemove = {
                                 viewModel.removeBok(bok.id)
+
                                 scope.launch {
                                     val result = snackbarHostState.showSnackbar(
                                         message = "${bok.titel} togs bort",
                                         actionLabel = "Ångra",
-                                        duration = SnackbarDuration.Short,
+                                        duration = SnackbarDuration.Short
                                     )
+
                                     if (result == SnackbarResult.ActionPerformed) {
                                         viewModel.undoRemove()
                                     }
@@ -304,18 +288,13 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                             onEdit = { viewModel.startEdit(bok) }
                         )
                     }
+                    }
                 }
             }
 
         }
 
     }
-}
-
-@Composable
-fun SnackbarHostStaste() {
-    TODO("Not yet implemented")
-}
 
 @Preview(showBackground = true)
     @Composable
