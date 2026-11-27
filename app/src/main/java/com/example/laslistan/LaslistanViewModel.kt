@@ -9,11 +9,18 @@ import androidx.lifecycle.ViewModel
 data class LaslistanUiState(
     val nyTitel: String = "",
     val editingId: Int? = null,
+    val nyKategori: String = "Fantasyroman",
     val bocker: List<Bok> = listOf(
-        Bok(1, "Harry Potter: Den vises sten", 2001, "Fantasi"),
+        Bok(1, "Harry Potter: Den vises sten", 2001, "Fantasyroman"),
         Bok(2, "Tunnlar", 2007, "Äventyr"),
-        Bok(3, "Matilda", 1988, "Fantasi")
+        Bok(3, "Matilda", 1988, "Fantasy")
     )
+)
+
+val kategorier: List<String> = listOf(
+    "Fantasyroman",
+    "Äventyr",
+    "Fantasy"
 )
 
 class LaslistanViewModel : ViewModel() {
@@ -33,12 +40,17 @@ class LaslistanViewModel : ViewModel() {
             id = nextId,
             titel = titel,
             ar = 0,
-            genre = "Okänd",
+            kategori = uiState.nyKategori,
         )
-        nextId = nextId + 1
+        nextId += 1
         uiState = uiState.copy(
             nyTitel = "",
-            bocker = uiState.bocker + bok,
+            bocker = uiState.bocker + Bok(
+                id = nextId,
+                titel = titel,
+                ar = 0,
+                kategori = uiState.nyKategori
+            )
         )
     }
 
@@ -70,5 +82,9 @@ class LaslistanViewModel : ViewModel() {
                 if (it.id == id) it.copy(titel = titel) else it
             },
         )
+    }
+
+    fun onKategoriChange(kategori: String) {
+        uiState = uiState.copy(nyKategori = kategori)
     }
 }
