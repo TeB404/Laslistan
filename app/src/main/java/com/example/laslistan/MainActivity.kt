@@ -101,6 +101,7 @@ fun BokKort(
     bok : Bok,
     onToggle: () -> Unit,
     onRemove: () -> Unit,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
@@ -127,6 +128,10 @@ fun BokKort(
                         text = "Ta bort",
                         style = MaterialTheme.typography.bodyMedium
                     )
+                }
+
+                TextButton(onClick = onEdit) {
+                    Text("Ändra")
                 }
             }
             Checkbox(
@@ -167,13 +172,24 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                 modifier = Modifier.fillMaxWidth()
             )
             Button(
-                onClick = { viewModel.addBok() },
+                onClick = {
+                    if (state.editingId == null) {
+                        viewModel.addBok()
+                    } else {
+                        viewModel.saveEdit()
+                    }
+                },
                 enabled = state.nyTitel.isNotBlank(),
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .fillMaxWidth()
             ) {
-                Text("Lägg till")
+                Text(
+                    if (state.editingId == null)
+                    "Lägg till"
+                    else
+                    "Spara"
+                )
             }
             LazyColumn(
                 modifier = Modifier
@@ -194,6 +210,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                         bok = bok,
                         onToggle = { viewModel.toggleSeen(bok.id) },
                         onRemove = { viewModel.removeBok(bok.id) },
+                        onEdit = { viewModel.startEdit(bok) }
                     )
                 }
 
@@ -202,6 +219,7 @@ fun LaslistanScreen(viewModel: LaslistanViewModel = viewModel()) {
                         bok = bok,
                         onToggle = { viewModel.toggleSeen(bok.id) },
                         onRemove = { viewModel.removeBok(bok.id) },
+                        onEdit = { viewModel.startEdit(bok) }
                     )
                 }
             }
